@@ -1,4 +1,6 @@
-flask
-numpy
-opencv-python-headless
 tensorflow
+numpy
+matplotlib
+Pillow
+opencv-python-headless
+flask
