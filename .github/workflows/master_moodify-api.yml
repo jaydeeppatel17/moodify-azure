@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'moodify-api'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_50F824A855C34C85A37B8CF531BD3122 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6939F35A0D5F485095DA852E723E9D65 }}
