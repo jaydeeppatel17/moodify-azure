@@ -48,6 +48,11 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
@@ -60,3 +65,6 @@ jobs:
           app-name: 'moodify-api'
           slot-name: 'production'
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_c739c7da7ddd4325a0d9f8a0ca928d2c }}
+          
+      - name: Logout of Azure
+        uses: azure/logout@v1
