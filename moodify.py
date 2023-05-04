@@ -1,54 +1,32 @@
-from flask import Flask, request, jsonify
+from keras.models import load_model
 import cv2
 import numpy as np
-from keras.models import load_model
-import json
-
-# Load the model
+label_dictionary={0:"Angry",1:"Disgust",2:"Fear",3:"Happy",4:"Neutral",5:"Sad",6:"Surprise"}
 moodDetector = load_model("moodifyEngine.h5")
+img = cv2.imread('sadladki.jpg')
+# img = cv2.imread('/content/Dataset/FER_2013/test/surprise/PrivateTest_10089743.jpg')
+def reshape_and_rotate(image):
+    W = 48
+    H = 48
+    image = image.reshape(W, H)
+    image = np.flip(image, axis=1)
+    image = np.rot90(image)
+    return image
 
-# Define a dictionary to map class indices to emotion labels
-label_dictionary = {0: "Angry", 1: "Disgust", 2: "Fear", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprise"}
+# Preprocess image
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+resized = cv2.resize(gray, (48, 48))
+normalized = resized / 255.0
+n = reshape_and_rotate(normalized)
+input_data = n.reshape((1,48,48))
+print(moodDetector.predict(input_data))
+# Make prediction
+prediction = np.argmax(moodDetector.predict(input_data), axis=-1)
 
-# Define a helper function to preprocess the image
-def preprocess_image(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    resized = cv2.resize(gray, (48, 48))
-    normalized = resized / 255.0
-    return normalized.reshape((1,48,48,1))
+# Print result
+print("The predicted emotion is:", label_dictionary.get(prediction[0]))
 
-# Define the prediction function
-def predict(image):
-    # Preprocess the image
-    input_data = preprocess_image(image)
-    
-    # Make a prediction using the model
-    prediction = np.argmax(moodDetector.predict(input_data), axis=-1)
-    
-    # Get the corresponding emotion label
-    emotion = label_dictionary.get(prediction[0])
-    
-    return emotion
-
-# Create a Flask app
-app = Flask(__name__)
-
-# Define an endpoint for handling image uploads
-@app.route('/upload', methods=['POST'])
-def upload():
-    file = request.files['file']
-    
-    # Read the image as a numpy array
-    file_bytes = np.asarray(bytearray(file.read()), dtype=np.uint8)
-    image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-    
-    # Make a prediction
-    emotion = predict(image)
-    
-    # Return the emotion as a JSON response
-    response = {'emotion': emotion}
-    return jsonify(response)
-
-# Run the app
-if __name__ == '__main__':
-     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
+# Show image
+#cv2_imshow(img)
+#cv2.waitKey(0)
+#cv2.destroyAllWindows()
