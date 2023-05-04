@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from keras.models import load_model
 import json
+import streamlit as st
 
 # Load the model
 moodDetector = load_model("moodifyEngine.h5")
@@ -47,8 +48,11 @@ def upload():
     
     # Return the emotion as a JSON response
     response = {'emotion': emotion}
-    return jsonify(response)
+    return response
 
 # Run the app
 if __name__ == '__main__':
+    st.set_page_config(page_title='Moodify Engine')
+    st.title('Moodify Engine')
+    st.write('Upload an image to predict the emotion')
     app.run()
