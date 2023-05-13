@@ -55,7 +55,7 @@ def predict_api():
 
 # Define the Streamlit app
 def main():
-    st.title('Moodify Engine')
+    st.title('New Moodify Engine')
     st.write('Upload an image and the Moodify Engine will detect the emotion in the image!')
     
     # Create a file uploader
